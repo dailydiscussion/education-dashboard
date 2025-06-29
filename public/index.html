@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Education Dashboard Self-Contained HTML Application" />
+    <title>Education Dashboard</title>
+
+    <!-- Tailwind CSS CDN - Retained as per your "no build" request -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&amp;family=Kalnia:wght@600&amp;family=Lemon&amp;family=Raleway:wght@700&amp;family=Tilt+Prism&amp;display=swap" rel="stylesheet">
+    <style>
+        /* Base styles - Retained as per your "no build" request */
+        body {
+            font-family: 'Inter', Josefin Sans;
+            -webkit-tap-highlight-color: transparent;
+            /* Disable tap highlight on mobile */
+            background-color: #f9fafb;
+            /* Light gray background */
+            color: #1f2937;
+            /* Darker text for readability */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Hide scrollbar for webkit browsers */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        /* General page styling - ensures pages fill content area */
+        .page {
+            min-height: calc(100vh - 80px);
+            /* Adjust based on your header/footer height */
+            padding-bottom: 5rem;
+            /* Space for bottom navigation */
+        }
+
+        /* Ensure the main container accounts for fixed bottom nav */
+        #main-content {
+            padding-bottom: 5rem;
+            /* Adjust if bottom nav height changes */
+        }
+
+        /* For the fixed notification message to be visible */
+        .z-50 {
+            z-index: 9999;
+        }
+
+        /* Ensure smooth transitions for page content changes */
+        .page-transition {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 transition-colors duration-300">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root" class="w-full max-w-md mx-auto bg-white min-h-screen shadow-lg relative overflow-hidden transition-colors duration-300">
+    </div>
+
+    <!-- The main entry point for your React application -->
+    <script type="module" src="../src/index.js"></script>
+</body>
+
+</html>
