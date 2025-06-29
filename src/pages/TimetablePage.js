@@ -179,7 +179,7 @@ const TimetablePage = React.memo(({ timetableEntries, testData, currentTimetable
                 <TimetableEventCard
                     events={eventsForSelectedDate}
                     isEditMode={timetableEditMode}
-                    onDelete={deleteTimetableEntry} // This is the prop passed from App.js
+                    onDelete={deleteTimetableEntry}
                     onCheck={handleCheckEvent}
                     selectedCalendarDate={selectedDisplayDate}
                     onSelectCalendarDate={setSelectedDisplayDate}
