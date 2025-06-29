@@ -6,7 +6,8 @@ import {
     addSubject, addTest, deleteSubject, deleteTest, handleToggleTestCompletion,
     addFocusItem, removeFocusItem, reorderFocusItems, addTimetableEntry as addTimetableEntryUtil,
     deleteTimetableEntry, handleLogin as handleLoginUtil, handleLogout as handleLogoutUtil,
-    handleResetLocalData, showNotification as showNotificationUtil
+    handleResetLocalData, showNotification as showNotificationUtil,
+    exportUserData, importUserData // <--- ADDED: Import new functions
 } from './utils/appFunctions';
 
 // Import Page Components
@@ -251,6 +252,14 @@ const App = () => {
         deleteTimetableEntry(userId, showNotification, idToDelete);
     }, [userId, showNotification]);
 
+    const handleExportUserData = useCallback(() => { // <--- ADDED: New handler
+        exportUserData(userId, showNotification, userName);
+    }, [userId, showNotification, userName]);
+
+    const handleImportUserData = useCallback(async (importFileData) => { // <--- ADDED: New handler
+        await importUserData(userId, showNotification, importFileData);
+    }, [userId, showNotification]);
+
     const navigateTo = useCallback((pageName, options = {}) => {
         setCurrentPage(pageName);
         if (pageName === 'trophy' && options.fromTimetable && options.subject) {
@@ -325,6 +334,8 @@ const App = () => {
                     onManageContent={() => navigateTo('manage-tests')} onLogout={handleUserLogout}
                     currentUserId={userId} userName={userName} userEmail={userEmail}
                     onResetLocalData={handleUserResetLocalData}
+                    exportUserData={handleExportUserData} // <--- ADDED: Pass new prop
+                    importUserData={handleImportUserData} // <--- ADDED: Pass new prop
                 />;
             default:
                 console.warn("renderPage: Unknown currentPage. Defaulting to Dashboard.");

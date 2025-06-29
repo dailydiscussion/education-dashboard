@@ -458,3 +458,151 @@ export const showNotification = (setNotification) => (message, type = 'info') =>
         setNotification(prev => ({ ...prev, visible: false }));
     }, 3000);
 };
+
+/**
+ * Fetches all user-specific data from Firestore and creates a downloadable JSON file.
+ * @param {string} userId - The current user's ID.
+ * @param {function} showNotification - Function to display notifications.
+ * @param {string} userName - The current user's name for file naming.
+ * @returns {Promise<void>}
+ */
+export const exportUserData = async (userId, showNotification, userName) => {
+    if (!userId) {
+        showNotification('Authentication not ready. Please log in.', 'error');
+        return;
+    }
+
+    try {
+        const userData = {};
+
+        // 1. Fetch Subjects and Tests
+        const subjectsCollectionRef = collection(db, "artifacts", app_id, "users", userId, "subjects");
+        const subjectsSnapshot = await getDocs(subjectsCollectionRef);
+        const subjectsData = {};
+        for (const docSnap of subjectsSnapshot.docs) {
+            subjectsData[docSnap.id] = docSnap.data().tests || [];
+        }
+        userData.subjects = subjectsData;
+
+        // 2. Fetch Today's Focus Items
+        const todayFocusCollectionRef = collection(db, "artifacts", app_id, "users", userId, "todayFocus");
+        const focusSnapshot = await getDocs(todayFocusCollectionRef);
+        userData.todayFocus = focusSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // 3. Fetch Timetable Entries
+        const timetableCollectionRef = collection(db, "artifacts", app_id, "users", userId, "timetable");
+        const timetableSnapshot = await getDocs(timetableCollectionRef);
+        userData.timetable = timetableSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Convert to JSON string
+        const jsonString = JSON.stringify(userData, null, 2);
+
+        // Create a Blob and trigger download
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${userName || 'user'}_data_export_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showNotification('User data exported successfully!', 'success');
+    } catch (error) {
+        console.error("Error exporting data:", error);
+        showNotification('Failed to export data.', 'error');
+    }
+};
+
+/**
+ * Imports user data from a JSON file and overwrites/updates Firestore.
+ * @param {string} userId - The current user's ID.
+ * @param {function} showNotification - Function to display notifications.
+ * @param {object} importData - The parsed JSON data to import.
+ * @returns {Promise<void>}
+ */
+export const importUserData = async (userId, showNotification, importData) => {
+    if (!userId) {
+        showNotification('Authentication not ready. Please log in.', 'error');
+        return;
+    }
+
+    try {
+        const batch = writeBatch(db);
+
+        // --- Handle Subjects and Tests ---
+        const subjectsCollectionRef = collection(db, "artifacts", app_id, "users", userId, "subjects");
+        // Delete all existing subjects first to ensure a clean overwrite
+        const existingSubjectsSnapshot = await getDocs(subjectsCollectionRef);
+        existingSubjectsSnapshot.forEach((docSnap) => {
+            batch.delete(doc(subjectsCollectionRef, docSnap.id));
+        });
+
+        if (importData.subjects && typeof importData.subjects === 'object') {
+            for (const subjectName in importData.subjects) {
+                if (Object.hasOwnProperty.call(importData.subjects, subjectName)) {
+                    const tests = importData.subjects[subjectName];
+                    if (Array.isArray(tests)) {
+                        const subjectDocRef = doc(subjectsCollectionRef, subjectName);
+                        batch.set(subjectDocRef, { tests: tests });
+                    }
+                }
+            }
+        }
+
+        // --- Handle Today's Focus Items ---
+        const todayFocusCollectionRef = collection(db, "artifacts", app_id, "users", userId, "todayFocus");
+        // Delete all existing focus items
+        const existingFocusSnapshot = await getDocs(todayFocusCollectionRef);
+        existingFocusSnapshot.forEach((docSnap) => {
+            batch.delete(doc(todayFocusCollectionRef, docSnap.id));
+        });
+
+        if (importData.todayFocus && Array.isArray(importData.todayFocus)) {
+            importData.todayFocus.forEach(item => {
+                // Ensure unique IDs for new docs, if original IDs are not preserved
+                const newDocRef = doc(todayFocusCollectionRef);
+                batch.set(newDocRef, {
+                    title: item.title,
+                    mcqs: item.mcqs,
+                    date: item.date,
+                    link: item.link || '',
+                    subject: item.subject,
+                    iconPath: item.iconPath || "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 14v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75", // Default if missing
+                    completed: item.completed || false,
+                    order: item.order || 0
+                });
+            });
+        }
+
+        // --- Handle Timetable Entries ---
+        const timetableCollectionRef = collection(db, "artifacts", app_id, "users", userId, "timetable");
+        // Delete all existing timetable entries
+        const existingTimetableSnapshot = await getDocs(timetableCollectionRef);
+        existingTimetableSnapshot.forEach((docSnap) => {
+            batch.delete(doc(timetableCollectionRef, docSnap.id));
+        });
+
+        if (importData.timetable && Array.isArray(importData.timetable)) {
+            importData.timetable.forEach(entry => {
+                const newDocRef = doc(timetableCollectionRef);
+                batch.set(newDocRef, {
+                    subject: entry.subject,
+                    topic: entry.topic,
+                    date: entry.date,
+                    time: entry.time,
+                    checked: entry.checked || false // Default if missing
+                });
+            });
+        }
+
+        await batch.commit();
+        showNotification('Data imported successfully! Your app will now reload to reflect changes.', 'success');
+        // Force a reload to ensure all states dependent on fetched data are re-initialized
+        window.location.reload();
+    } catch (error) {
+        console.error("Error importing data:", error);
+        showNotification('Failed to import data. Please check the file and try again.', 'error');
+    }
+};
