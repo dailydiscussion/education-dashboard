@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/education-dashboard/static/css/main.6917d28a.css",
-    "main.js": "/education-dashboard/static/js/main.478cdc6a.js",
+    "main.js": "/education-dashboard/static/js/main.e7dcc9c1.js",
     "index.html": "/education-dashboard/index.html",
     "main.6917d28a.css.map": "/education-dashboard/static/css/main.6917d28a.css.map",
-    "main.478cdc6a.js.map": "/education-dashboard/static/js/main.478cdc6a.js.map"
+    "main.e7dcc9c1.js.map": "/education-dashboard/static/js/main.e7dcc9c1.js.map"
   },
   "entrypoints": [
     "static/css/main.6917d28a.css",
-    "static/js/main.478cdc6a.js"
+    "static/js/main.e7dcc9c1.js"
   ]
 }
