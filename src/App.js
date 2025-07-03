@@ -1,16 +1,17 @@
 // src/App.js
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
-import { db, app_id, auth } from './firebaseConfig';
+import { db, app_id, auth } from './firebaseConfig'; // Path relative to src/App.js
 import {
     addSubject, addTest, deleteSubject, deleteTest, handleToggleTestCompletion,
     addFocusItem, removeFocusItem, reorderFocusItems, addTimetableEntry as addTimetableEntryUtil,
-    deleteTimetableEntry, handleLogin as handleLoginUtil, handleLogout as handleLogoutUtil,
-    handleResetLocalData, showNotification as showNotificationUtil,
-    exportUserData, importUserData // <--- ADDED: Import new functions
-} from './utils/appFunctions';
+    deleteTimetableEntry, updateTimetableEntry as updateTimetableEntryUtil,
+    checkTimetableEntry as checkTimetableEntryUtil,
+    handleLogin as handleLoginUtil, handleLogout as handleLogoutUtil,
+    handleResetLocalData, showNotification as showNotificationUtil
+} from './utils/appFunctions'; // Path relative to src/App.js
 
-// Import Page Components
+// Import Page Components (paths relative to src/App.js)
 import DashboardPage from './pages/DashboardPage';
 import TimetablePage from './pages/TimetablePage';
 import TestsCompletedPage from './pages/TestsCompletedPage';
@@ -19,7 +20,7 @@ import ManageContentPage from './pages/ManageContentPage';
 import ProfilePage from './pages/ProfilePage';
 import LoginPage from './components/LoginPage';
 
-// Import Shared UI Components
+// Import Shared UI Components (paths relative to src/App.js)
 import ErrorBoundary from './components/ErrorBoundary';
 import NotificationMessage from './components/NotificationMessage';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -33,7 +34,7 @@ const App = () => {
     const [userId, setUserId] = useState(null);
     const [userName, setUserName] = useState(null);
     const [userEmail, setUserEmail] = useState(null);
-    const [isAuthReady, setIsAuthReady] = useState(false);
+    const [isAuthReady, setIsAuthReady] = useState(true);
     const [isLoadingApp, setIsLoadingApp] = useState(true);
     const [isLoadingTodayFocus, setIsLoadingTodayFocus] = useState(true);
     const [testData, setTestData] = useState({});
@@ -76,7 +77,6 @@ const App = () => {
             setCurrentPage('login');
             setIsLoadingApp(false);
         }
-        setIsAuthReady(true);
     }, []);
 
     // Request Notification Permission
@@ -252,13 +252,14 @@ const App = () => {
         deleteTimetableEntry(userId, showNotification, idToDelete);
     }, [userId, showNotification]);
 
-    const handleExportUserData = useCallback(() => { // <--- ADDED: New handler
-        exportUserData(userId, showNotification, userName);
-    }, [userId, showNotification, userName]);
-
-    const handleImportUserData = useCallback(async (importFileData) => { // <--- ADDED: New handler
-        await importUserData(userId, showNotification, importFileData);
+    const handleUpdateTimetableEntry = useCallback((eventId, subject, topic, date, time) => {
+        updateTimetableEntryUtil(userId, showNotification, eventId, subject, topic, date, time);
     }, [userId, showNotification]);
+
+    const handleCheckTimetableEntry = useCallback((eventId) => {
+        checkTimetableEntryUtil(userId, showNotification, eventId);
+    }, [userId, showNotification]);
+
 
     const navigateTo = useCallback((pageName, options = {}) => {
         setCurrentPage(pageName);
@@ -308,6 +309,8 @@ const App = () => {
                     timetableEntries={timetableEntries} testData={testData} currentTimetableSubject={currentTimetableSubject}
                     setCurrentTimetableSubject={setCurrentTimetableSubject} setCurrentSelectedSubject={setCurrentSelectedSubject}
                     addTimetableEntry={handleAddTimetableEntry} deleteTimetableEntry={handleDeleteTimetableEntry}
+                    updateTimetableEntry={handleUpdateTimetableEntry}
+                    onCheck={handleCheckTimetableEntry}
                     navigateToTrophyPage={(subject) => navigateTo('trophy', { fromTimetable: true, subject })}
                     showNotification={showNotification}
                     userId={userId}
@@ -334,8 +337,7 @@ const App = () => {
                     onManageContent={() => navigateTo('manage-tests')} onLogout={handleUserLogout}
                     currentUserId={userId} userName={userName} userEmail={userEmail}
                     onResetLocalData={handleUserResetLocalData}
-                    exportUserData={handleExportUserData} // <--- ADDED: Pass new prop
-                    importUserData={handleImportUserData} // <--- ADDED: Pass new prop
+                    showNotification={showNotification}
                 />;
             default:
                 console.warn("renderPage: Unknown currentPage. Defaulting to Dashboard.");

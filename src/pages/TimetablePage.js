@@ -1,70 +1,67 @@
 // src/pages/TimetablePage.js
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-// Removed AuthContext import as userId is provided via props
-import CircularProgressBar from '../components/CircularProgressBar';
-import TimetableEventCard from '../components/TimetableEventCard';
-// Only import showNotification if it's not strictly passed as a prop from App.js
-// For addTimetableEntry and deleteTimetableEntry, we'll assume they are passed as props.
-// If they are NOT passed as props from App.js, you would need to re-add their imports
-// from '../utils/appFunctions'; and adjust the calls accordingly.
+import React, { useState, useCallback, useMemo } from 'react';
+import CircularProgressBar from '../components/CircularProgressBar'; // Path relative to src/pages/
+import TimetableEventCard from '../components/TimetableEventCard';   // Path relative to src/pages/
+import EditTimetableModal from '../components/EditTimetableModal'; // Path relative to src/pages/
+// Import the new updateTimetableEntry from appFunctions
+import { updateTimetableEntry } from '../utils/appFunctions'; // Path relative to src/pages/
 
-import {
-    db, app_id, // Firebase initialized instances and app_id
-    doc, setDoc, getDoc, collection, query, where, onSnapshot, deleteDoc // Firestore functions needed here
-} from '../firebaseConfig'; // Import ALL needed Firestore functions directly
-
-const TimetablePage = React.memo(({ timetableEntries, testData, currentTimetableSubject, setCurrentTimetableSubject, setCurrentSelectedSubject, addTimetableEntry, deleteTimetableEntry, navigateToTrophyPage, showNotification, userId }) => {
-    // userId is directly available from props, no need for useContext here.
-
+const TimetablePage = React.memo(({ timetableEntries, testData, currentTimetableSubject, setCurrentTimetableSubject, setCurrentSelectedSubject, addTimetableEntry, deleteTimetableEntry, onCheck, navigateToTrophyPage, showNotification, userId }) => {
     const [timetableEditMode, setTimetableEditMode] = useState(false);
-    const [showAddTimetableForm, setShowAddTimetableForm] = useState(false);
+    const [showAddTimetableForm, setShowAddTimetableForm] = useState(false); // Controls visibility of Add form
+
+    // State for the Edit Modal
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [currentEventToEdit, setCurrentEventToEdit] = useState(null); // Stores the event object being edited
+
     const [newSubject, setNewSubject] = useState('');
     const [newTopic, setNewTopic] = useState('');
     const [newDate, setNewDate] = useState('');
     const [newTime, setNewTime] = useState('');
+
     const [selectedDisplayDate, setSelectedDisplayDate] = useState(new Date());
 
-    // Original handleAddEvent logic, calls addTimetableEntry from props
-    const handleAddEvent = useCallback(() => {
-        // addTimetableEntry is a prop passed from App.js
-        if (addTimetableEntry) {
-            addTimetableEntry(newSubject, newTopic, newDate, newTime);
-        } else {
-            console.error("addTimetableEntry function not provided via props. Please check App.js.");
-            // Fallback to a notification if the prop is missing
-            if (showNotification) {
-                showNotification("Failed to add event: Function missing.", "error");
-            }
-        }
+    const handleAddEvent = () => {
+        addTimetableEntry(newSubject, newTopic, newDate, newTime);
         setNewSubject('');
         setNewTopic('');
         setNewDate('');
         setNewTime('');
-        setShowAddTimetableForm(false);
-    }, [addTimetableEntry, newSubject, newTopic, newDate, newTime, showNotification]);
+        setShowAddTimetableForm(false); // Hide add form after adding
+    };
 
-
-    const handleCheckEvent = useCallback(async (eventId) => {
-        if (!userId) { showNotification('Authentication not ready. Please log in.', 'error'); return; }
-        try {
-            // Correctly use imported Firestore functions: doc, db, app_id, getDoc, setDoc
-            const timetableEntryDocRef = doc(db, "artifacts", app_id, "users", userId, "timetable", eventId);
-            const entryDoc = await getDoc(timetableEntryDocRef);
-
-            if (entryDoc.exists()) {
-                const currentCheckedStatus = entryDoc.data().checked || false;
-                await setDoc(timetableEntryDocRef, { checked: !currentCheckedStatus }, { merge: true });
-                showNotification(`Timetable event marked as ${!currentCheckedStatus ? 'completed' : 'incomplete'}.`, 'success');
-            } else {
-                showNotification('Timetable entry not found.', 'error');
-            }
-        } catch (error) {
-            console.error("Error toggling timetable event completion:", error);
-            showNotification("Failed to update timetable event status.", 'error');
+    /**
+     * Handles the edit action for a timetable event.
+     * Populates the modal with the event's current data for editing.
+     * @param {string} eventId - The ID of the event to edit.
+     */
+    const handleEditEvent = useCallback((eventId) => {
+        const eventToEdit = timetableEntries.find(event => event.id === eventId);
+        if (eventToEdit) {
+            setCurrentEventToEdit(eventToEdit); // Set the event data for the modal
+            setShowEditModal(true); // Show the edit modal
+            setShowAddTimetableForm(false); // Hide add form if it was open
         }
-    }, [userId, showNotification]);
+    }, [timetableEntries]);
 
-    const subjects = useMemo(() => Object.keys(testData || {}), [testData]); // Derive subjects from testData prop
+    /**
+     * Handles updating an existing timetable event.
+     * This function is passed to the modal and called when the modal's update button is clicked.
+     * @param {string} eventId - The ID of the event to update.
+     * @param {string} subject - The updated subject.
+     * @param {string} topic - The updated topic.
+     * @param {string} date - The updated date.
+     * @param {string} time - The updated time.
+     */
+    const handleUpdateEvent = useCallback(async (eventId, subject, topic, date, time) => {
+        // Corrected: Pass userId and showNotification to updateTimetableEntry
+        await updateTimetableEntry(userId, showNotification, eventId, subject, topic, date, time);
+        setCurrentEventToEdit(null); // Clear the event data
+        setShowEditModal(false); // Hide the modal after updating
+    }, [userId, showNotification, updateTimetableEntry]); // Added userId and showNotification to dependencies
+
+
+    const subjects = Object.keys(testData);
 
     const calculateProgress = useCallback(() => {
         const subjectTests = testData[currentTimetableSubject] || [];
@@ -78,29 +75,24 @@ const TimetablePage = React.memo(({ timetableEntries, testData, currentTimetable
     const totalCount = testData[currentTimetableSubject] ? testData[currentTimetableSubject].length : 0;
 
     const eventsForSelectedDate = useMemo(() => {
-        const selectedDateString = selectedDisplayDate.toLocaleDateString('en-CA');
+        const selectedDateString = selectedDisplayDate.toLocaleDateString('en-CA'); // 'en-CA' gives ISO 8601 format
         return timetableEntries.filter(entry => entry.date === selectedDateString);
     }, [timetableEntries, selectedDisplayDate]);
-
-
-    const handlePrevDay = useCallback(() => {
-        const newDate = new Date(selectedDisplayDate);
-        newDate.setDate(newDate.getDate() - 1);
-        setSelectedDisplayDate(newDate);
-    }, [selectedDisplayDate]);
-
-    const handleNextDay = useCallback(() => {
-        const newDate = new Date(selectedDisplayDate);
-        newDate.setDate(newDate.getDate() + 1);
-        setSelectedDisplayDate(newDate);
-    }, [selectedDisplayDate]);
 
     return (
         <div id="page-timetable" className="page px-6 py-8">
             <header className="flex items-center justify-between mb-2">
                 <h1 className="text-3xl font-bold text-gray-900">Timetable</h1>
                 <button
-                    onClick={() => setTimetableEditMode(!timetableEditMode)}
+                    onClick={() => {
+                        setTimetableEditMode(!timetableEditMode);
+                        // Reset all form states and hide modal when toggling edit mode off
+                        if (timetableEditMode) {
+                            setCurrentEventToEdit(null);
+                            setShowAddTimetableForm(false);
+                            setShowEditModal(false);
+                        }
+                    }}
                     className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
                     aria-label={timetableEditMode ? 'Done editing timetable' : 'Edit timetable'}
                 >
@@ -111,7 +103,7 @@ const TimetablePage = React.memo(({ timetableEntries, testData, currentTimetable
             <p className="text-gray-500 mb-6">Upcoming Study Schedule</p>
 
             <div className="mb-6">
-                <label htmlFor="select-timetable-subject" className="block text-sm font-medium text-gray-700 mb-1">Track Progress for Subject:</label>
+                <label htmlFor="select-timetable-subject" className="block text-sm font-medium text-gray-700 mb-3">Track Progress for Subject:</label>
                 <select
                     id="select-timetable-subject"
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -142,14 +134,38 @@ const TimetablePage = React.memo(({ timetableEntries, testData, currentTimetable
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </div>
 
+            <hr className="my-2 border-t border-gray-200" />
+
+            <div id="timetable-events-list" className="space-y-4 bg-white rounded-lg min-h-[100px]">
+                <TimetableEventCard
+                    events={eventsForSelectedDate}
+                    isEditMode={timetableEditMode}
+                    onDelete={deleteTimetableEntry}
+                    onCheck={onCheck}
+                    onEdit={handleEditEvent}
+                    selectedCalendarDate={selectedDisplayDate}
+                    onSelectCalendarDate={setSelectedDisplayDate}
+                />
+            </div>
+
+            {/* Button to toggle visibility of the Add Event form */}
             <button
-                onClick={() => setShowAddTimetableForm(!showAddTimetableForm)}
-                className="w-full bg-blue-50 text-blue-700 font-semibold py-2 px-4 rounded-lg flex items-center justify-center hover:bg-blue-100 transition duration-300 mb-6"
+                onClick={() => {
+                    setShowAddTimetableForm(!showAddTimetableForm);
+                    setShowEditModal(false); // Hide edit modal when opening add form
+                    setCurrentEventToEdit(null); // Clear editing state
+                    setNewSubject(''); // Clear add form fields
+                    setNewTopic('');
+                    setNewDate('');
+                    setNewTime('');
+                }}
+                className="w-full bg-blue-50 text-blue-700 font-semibold mt-6 py-2 px-4 rounded-lg flex items-center justify-center hover:bg-blue-100 transition duration-300 mb-6"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 {showAddTimetableForm ? 'Hide Add Event Form' : 'Add New Study Event'}
             </button>
 
+            {/* Add New Study Event Form */}
             {showAddTimetableForm && (
                 <div id="add-new-timetable-form-container" className="bg-white p-4 rounded-lg mb-6 shadow-sm">
                     <h4 className="font-bold text-gray-800 mb-3">Add New Study Event</h4>
@@ -175,16 +191,14 @@ const TimetablePage = React.memo(({ timetableEntries, testData, currentTimetable
                 </div>
             )}
 
-            <div id="timetable-events-list" className="space-y-4 bg-white rounded-lg min-h-[100px]">
-                <TimetableEventCard
-                    events={eventsForSelectedDate}
-                    isEditMode={timetableEditMode}
-                    onDelete={deleteTimetableEntry}
-                    onCheck={handleCheckEvent}
-                    selectedCalendarDate={selectedDisplayDate}
-                    onSelectCalendarDate={setSelectedDisplayDate}
-                />
-            </div>
+            {/* Render the EditTimetableModal */}
+            <EditTimetableModal
+                isOpen={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                eventData={currentEventToEdit}
+                onUpdateEvent={handleUpdateEvent}
+                showNotification={showNotification}
+            />
         </div>
     );
 });

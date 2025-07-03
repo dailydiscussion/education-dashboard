@@ -80,7 +80,7 @@ export const addTest = async (userId, showNotification, testData, subjectName, t
  */
 export const deleteSubject = async (
     userId, showNotification, testData, setTodayFocusItems, setTimetableEntries,
-    setCurrentSelectedSubject, setCurrentTimetableSubject, subjectName // Ensure subjectName is a parameter
+    setCurrentSelectedSubject, setCurrentTimetableSubject, subjectName
 ) => {
     if (!userId) { showNotification('Authentication not ready. Please log in.', 'error'); return; }
     if (!testData.hasOwnProperty(subjectName)) { showNotification(`Subject "${subjectName}" not found.`, 'error'); return; }
@@ -350,6 +350,57 @@ export const addTimetableEntry = async (userId, showNotification, notificationPe
 };
 
 /**
+ * Updates an existing timetable entry.
+ * @param {string} userId - The current user's ID.
+ * @param {function} showNotification - Function to display notifications.
+ * @param {string} eventId - The ID of the timetable entry document to update.
+ * @param {string} subject - The updated subject of the event.
+ * @param {string} topic - The updated topic of the event.
+ * @param {string} date - The updated date of the event (YYYY-MM-DD).
+ * @param {string} time - The updated time of the event (HH:MM).
+ * @returns {Promise<void>}
+ */
+export const updateTimetableEntry = async (userId, showNotification, eventId, subject, topic, date, time) => {
+    if (!userId) { showNotification('Authentication not ready. Please log in.', 'error'); return; }
+    if (!eventId || !subject || !topic || !date || !time) { showNotification('All fields for the timetable event are required for update.', 'error'); return; }
+    try {
+        const timetableEntryDocRef = doc(db, "artifacts", app_id, "users", userId, "timetable", eventId);
+        await setDoc(timetableEntryDocRef, { subject, topic, date, time }, { merge: true });
+        showNotification('Study event updated successfully!', 'success');
+    } catch (error) {
+        console.error("Error updating timetable entry:", error);
+        showNotification("Failed to update study event.", 'error');
+    }
+};
+
+/**
+ * Toggles the 'checked' status of a timetable entry.
+ * @param {string} userId - The current user's ID.
+ * @param {function} showNotification - Function to display notifications.
+ * @param {string} eventId - The ID of the timetable entry document to check/uncheck.
+ * @returns {Promise<void>}
+ */
+export const checkTimetableEntry = async (userId, showNotification, eventId) => {
+    if (!userId) { showNotification('Authentication not ready. Please log in.', 'error'); return; }
+    try {
+        const timetableEntryDocRef = doc(db, "artifacts", app_id, "users", userId, "timetable", eventId);
+        const entryDoc = await getDoc(timetableEntryDocRef);
+
+        if (entryDoc.exists()) {
+            const currentCheckedStatus = entryDoc.data().checked || false;
+            await setDoc(timetableEntryDocRef, { checked: !currentCheckedStatus }, { merge: true });
+            showNotification(`Timetable event marked as ${!currentCheckedStatus ? 'completed' : 'incomplete'}.`, 'success');
+        } else {
+            showNotification('Timetable entry not found.', 'error');
+        }
+    } catch (error) {
+        console.error("Error toggling timetable event completion:", error);
+        showNotification("Failed to update timetable event status.", 'error');
+    }
+};
+
+
+/**
  * Deletes a timetable entry.
  * @param {string} userId - The current user's ID.
  * @param {function} showNotification - Function to display notifications.
@@ -460,149 +511,143 @@ export const showNotification = (setNotification) => (message, type = 'info') =>
 };
 
 /**
- * Fetches all user-specific data from Firestore and creates a downloadable JSON file.
+ * Exports all user data from Firestore as a JSON file.
  * @param {string} userId - The current user's ID.
  * @param {function} showNotification - Function to display notifications.
- * @param {string} userName - The current user's name for file naming.
  * @returns {Promise<void>}
  */
-export const exportUserData = async (userId, showNotification, userName) => {
+export const handleExportData = async (userId, showNotification) => {
     if (!userId) {
         showNotification('Authentication not ready. Please log in.', 'error');
         return;
     }
 
     try {
-        const userData = {};
+        const exportedData = {};
 
-        // 1. Fetch Subjects and Tests
+        // Fetch Subjects and their Tests
         const subjectsCollectionRef = collection(db, "artifacts", app_id, "users", userId, "subjects");
         const subjectsSnapshot = await getDocs(subjectsCollectionRef);
-        const subjectsData = {};
-        for (const docSnap of subjectsSnapshot.docs) {
-            subjectsData[docSnap.id] = docSnap.data().tests || [];
-        }
-        userData.subjects = subjectsData;
+        exportedData.subjects = {};
+        subjectsSnapshot.forEach(docSnap => {
+            exportedData.subjects[docSnap.id] = docSnap.data();
+        });
 
-        // 2. Fetch Today's Focus Items
-        const todayFocusCollectionRef = collection(db, "artifacts", app_id, "users", userId, "todayFocus");
-        const focusSnapshot = await getDocs(todayFocusCollectionRef);
-        userData.todayFocus = focusSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        // 3. Fetch Timetable Entries
+        // Fetch Timetable Entries
         const timetableCollectionRef = collection(db, "artifacts", app_id, "users", userId, "timetable");
         const timetableSnapshot = await getDocs(timetableCollectionRef);
-        userData.timetable = timetableSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        exportedData.timetable = timetableSnapshot.docs.map(docSnap => ({
+            id: docSnap.id,
+            ...docSnap.data()
+        }));
 
-        // Convert to JSON string
-        const jsonString = JSON.stringify(userData, null, 2);
+        // Fetch Today's Focus Items
+        const todayFocusCollectionRef = collection(db, "artifacts", app_id, "users", userId, "todayFocus");
+        const todayFocusSnapshot = await getDocs(todayFocusCollectionRef);
+        exportedData.todayFocus = todayFocusSnapshot.docs.map(docSnap => ({
+            id: docSnap.id,
+            ...docSnap.data()
+        }));
 
-        // Create a Blob and trigger download
+        // Convert data to JSON string
+        const jsonString = JSON.stringify(exportedData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
+
+        // Create a temporary link and trigger download
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${userName || 'user'}_data_export_${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `education_dashboard_data_${userId}_${new Date().toISOString().slice(0, 10)}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url); // Clean up the URL object
 
-        showNotification('User data exported successfully!', 'success');
+        showNotification('Data exported successfully!', 'success');
+
     } catch (error) {
         console.error("Error exporting data:", error);
-        showNotification('Failed to export data.', 'error');
+        showNotification('Failed to export data. Please try again.', 'error');
     }
 };
 
 /**
- * Imports user data from a JSON file and overwrites/updates Firestore.
+ * Imports user data from a JSON object into Firestore.
+ * This function will overwrite existing data for subjects, timetable, and todayFocus.
  * @param {string} userId - The current user's ID.
  * @param {function} showNotification - Function to display notifications.
- * @param {object} importData - The parsed JSON data to import.
+ * @param {object} importFileData - The parsed JSON object containing data to import.
  * @returns {Promise<void>}
  */
-export const importUserData = async (userId, showNotification, importData) => {
+export const handleImportData = async (userId, showNotification, importFileData) => {
     if (!userId) {
         showNotification('Authentication not ready. Please log in.', 'error');
+        return;
+    }
+    if (!importFileData || typeof importFileData !== 'object') {
+        showNotification('Invalid data for import.', 'error');
         return;
     }
 
     try {
         const batch = writeBatch(db);
 
-        // --- Handle Subjects and Tests ---
-        const subjectsCollectionRef = collection(db, "artifacts", app_id, "users", userId, "subjects");
-        // Delete all existing subjects first to ensure a clean overwrite
-        const existingSubjectsSnapshot = await getDocs(subjectsCollectionRef);
-        existingSubjectsSnapshot.forEach((docSnap) => {
-            batch.delete(doc(subjectsCollectionRef, docSnap.id));
-        });
-
-        if (importData.subjects && typeof importData.subjects === 'object') {
-            for (const subjectName in importData.subjects) {
-                if (Object.hasOwnProperty.call(importData.subjects, subjectName)) {
-                    const tests = importData.subjects[subjectName];
-                    if (Array.isArray(tests)) {
-                        const subjectDocRef = doc(subjectsCollectionRef, subjectName);
-                        batch.set(subjectDocRef, { tests: tests });
-                    }
-                }
+        // --- Import Subjects ---
+        if (importFileData.subjects) {
+            const subjectsCollectionRef = collection(db, "artifacts", app_id, "users", userId, "subjects");
+            // First, delete existing subjects to ensure a clean import or merge strategy
+            const existingSubjectsSnapshot = await getDocs(subjectsCollectionRef);
+            existingSubjectsSnapshot.forEach(docSnap => {
+                batch.delete(doc(subjectsCollectionRef, docSnap.id));
+            });
+            // Add new subjects and their tests
+            for (const subjectName in importFileData.subjects) {
+                const subjectData = importFileData.subjects[subjectName];
+                const subjectDocRef = doc(subjectsCollectionRef, subjectName);
+                batch.set(subjectDocRef, subjectData); // Overwrite or create subject with its tests
             }
         }
 
-        // --- Handle Today's Focus Items ---
-        const todayFocusCollectionRef = collection(db, "artifacts", app_id, "users", userId, "todayFocus");
-        // Delete all existing focus items
-        const existingFocusSnapshot = await getDocs(todayFocusCollectionRef);
-        existingFocusSnapshot.forEach((docSnap) => {
-            batch.delete(doc(todayFocusCollectionRef, docSnap.id));
-        });
-
-        if (importData.todayFocus && Array.isArray(importData.todayFocus)) {
-            importData.todayFocus.forEach(item => {
-                // Ensure unique IDs for new docs, if original IDs are not preserved
-                const newDocRef = doc(todayFocusCollectionRef);
-                batch.set(newDocRef, {
-                    title: item.title,
-                    mcqs: item.mcqs,
-                    date: item.date,
-                    link: item.link || '',
-                    subject: item.subject,
-                    iconPath: item.iconPath || "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 14v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75", // Default if missing
-                    completed: item.completed || false,
-                    order: item.order || 0
-                });
+        // --- Import Timetable Entries ---
+        if (importFileData.timetable && Array.isArray(importFileData.timetable)) {
+            const timetableCollectionRef = collection(db, "artifacts", app_id, "users", userId, "timetable");
+            // Delete existing timetable entries
+            const existingTimetableSnapshot = await getDocs(timetableCollectionRef);
+            existingTimetableSnapshot.forEach(docSnap => {
+                batch.delete(doc(timetableCollectionRef, docSnap.id));
+            });
+            // Add new timetable entries
+            importFileData.timetable.forEach(entry => {
+                // Ensure each entry has an ID or generate a new one if it's not meant to preserve IDs
+                const entryRef = entry.id ? doc(timetableCollectionRef, entry.id) : doc(timetableCollectionRef);
+                // Remove 'id' from the data if it was present and we are generating new ones
+                const { id, ...dataWithoutId } = entry;
+                batch.set(entryRef, dataWithoutId);
             });
         }
 
-        // --- Handle Timetable Entries ---
-        const timetableCollectionRef = collection(db, "artifacts", app_id, "users", userId, "timetable");
-        // Delete all existing timetable entries
-        const existingTimetableSnapshot = await getDocs(timetableCollectionRef);
-        existingTimetableSnapshot.forEach((docSnap) => {
-            batch.delete(doc(timetableCollectionRef, docSnap.id));
-        });
-
-        if (importData.timetable && Array.isArray(importData.timetable)) {
-            importData.timetable.forEach(entry => {
-                const newDocRef = doc(timetableCollectionRef);
-                batch.set(newDocRef, {
-                    subject: entry.subject,
-                    topic: entry.topic,
-                    date: entry.date,
-                    time: entry.time,
-                    checked: entry.checked || false // Default if missing
-                });
+        // --- Import Today's Focus Items ---
+        if (importFileData.todayFocus && Array.isArray(importFileData.todayFocus)) {
+            const todayFocusCollectionRef = collection(db, "artifacts", app_id, "users", userId, "todayFocus");
+            // Delete existing focus items
+            const existingFocusSnapshot = await getDocs(todayFocusCollectionRef);
+            existingFocusSnapshot.forEach(docSnap => {
+                batch.delete(doc(todayFocusCollectionRef, docSnap.id));
+            });
+            // Add new focus items
+            importFileData.todayFocus.forEach(item => {
+                const itemRef = item.id ? doc(todayFocusCollectionRef, item.id) : doc(todayFocusCollectionRef);
+                const { id, ...dataWithoutId } = item;
+                batch.set(itemRef, dataWithoutId);
             });
         }
 
         await batch.commit();
-        showNotification('Data imported successfully! Your app will now reload to reflect changes.', 'success');
-        // Force a reload to ensure all states dependent on fetched data are re-initialized
-        window.location.reload();
+        showNotification('Data imported successfully! Please refresh the page to see changes.', 'success');
+        // A full page reload might be necessary to ensure all states dependent on Firestore listeners are updated.
+        // window.location.reload(); // Consider if this is desired behavior for your app
     } catch (error) {
         console.error("Error importing data:", error);
-        showNotification('Failed to import data. Please check the file and try again.', 'error');
+        showNotification('Failed to import data. Please ensure the file format is correct.', 'error');
     }
 };

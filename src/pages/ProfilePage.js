@@ -1,8 +1,9 @@
 // src/pages/ProfilePage.js
 import React, { useState } from 'react';
-// REMOVED: import { exportUserData, importUserData } from '../utils/appFunctions'; // This import is no longer needed as functions are passed via props
+// Import the actual functions from appFunctions
+import { handleExportData, handleImportData } from '../utils/appFunctions'; // Correct import
 
-const ProfilePage = React.memo(({ onManageContent, onLogout, currentUserId, userName, userEmail, showNotification, onResetLocalData, exportUserData, importUserData }) => {
+const ProfilePage = React.memo(({ onManageContent, onLogout, currentUserId, userName, userEmail, showNotification, onResetLocalData }) => {
     const [showImportConfirmation, setShowImportConfirmation] = useState(false);
     const [importFileData, setImportFileData] = useState(null);
 
@@ -32,8 +33,11 @@ const ProfilePage = React.memo(({ onManageContent, onLogout, currentUserId, user
     const confirmImport = async () => {
         setShowImportConfirmation(false);
         if (importFileData) {
-            await importUserData(importFileData); // Now using the prop version, App.js handles currentUserId and showNotification
+            // Call the handleImportData function from appFunctions, passing necessary props
+            await handleImportData(currentUserId, showNotification, importFileData);
             setImportFileData(null);
+            // Clear the file input after import attempt
+            document.getElementById('importFileInput').value = '';
         }
     };
 
@@ -70,7 +74,7 @@ const ProfilePage = React.memo(({ onManageContent, onLogout, currentUserId, user
 
                 {/* Export Data Button */}
                 <button
-                    onClick={exportUserData} // Now using the prop version directly
+                    onClick={() => handleExportData(currentUserId, showNotification)} // Correctly call handleExportData
                     className="w-full bg-green-50 text-green-700 font-semibold py-3 px-4 rounded-lg flex items-center justify-between hover:bg-green-100 transition duration-200"
                 >
                     Export All Data
