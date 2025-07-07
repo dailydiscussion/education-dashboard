@@ -1,13 +1,28 @@
 {
   "files": {
     "main.css": "/education-dashboard/static/css/main.bf528ee8.css",
-    "main.js": "/education-dashboard/static/js/main.f58db240.js",
+    "main.js": "/education-dashboard/static/js/main.f538a452.js",
+    "static/js/990.917d1135.chunk.js": "/education-dashboard/static/js/990.917d1135.chunk.js",
+    "static/js/3.28c040db.chunk.js": "/education-dashboard/static/js/3.28c040db.chunk.js",
+    "static/js/244.7c68bcda.chunk.js": "/education-dashboard/static/js/244.7c68bcda.chunk.js",
+    "static/js/763.edb0016d.chunk.js": "/education-dashboard/static/js/763.edb0016d.chunk.js",
+    "static/js/133.5d8c8179.chunk.js": "/education-dashboard/static/js/133.5d8c8179.chunk.js",
+    "static/js/807.f367c1e3.chunk.js": "/education-dashboard/static/js/807.f367c1e3.chunk.js",
+    "static/js/648.8228cb9e.chunk.js": "/education-dashboard/static/js/648.8228cb9e.chunk.js",
+    "service-worker.js": "/education-dashboard/service-worker.js",
     "index.html": "/education-dashboard/index.html",
     "main.bf528ee8.css.map": "/education-dashboard/static/css/main.bf528ee8.css.map",
-    "main.f58db240.js.map": "/education-dashboard/static/js/main.f58db240.js.map"
+    "main.f538a452.js.map": "/education-dashboard/static/js/main.f538a452.js.map",
+    "990.917d1135.chunk.js.map": "/education-dashboard/static/js/990.917d1135.chunk.js.map",
+    "3.28c040db.chunk.js.map": "/education-dashboard/static/js/3.28c040db.chunk.js.map",
+    "244.7c68bcda.chunk.js.map": "/education-dashboard/static/js/244.7c68bcda.chunk.js.map",
+    "763.edb0016d.chunk.js.map": "/education-dashboard/static/js/763.edb0016d.chunk.js.map",
+    "133.5d8c8179.chunk.js.map": "/education-dashboard/static/js/133.5d8c8179.chunk.js.map",
+    "807.f367c1e3.chunk.js.map": "/education-dashboard/static/js/807.f367c1e3.chunk.js.map",
+    "648.8228cb9e.chunk.js.map": "/education-dashboard/static/js/648.8228cb9e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.bf528ee8.css",
-    "static/js/main.f58db240.js"
+    "static/js/main.f538a452.js"
   ]
 }
