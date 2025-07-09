@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Offline</title>
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif; /* Fallback to sans-serif */
+            background-color: #f0f4f8; /* Light gray background */
+            color: #333; /* Dark text for readability */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            margin: 0;
+            padding: 1rem; /* Basic padding for small screens */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 90%; /* Max width for mobile */
+            width: 100%;
+            padding: 2.5rem 1.5rem; /* Adjusted padding for the new layout */
+            background-color: #ffffff; /* White background for content */
+            border-radius: 0.75rem; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            text-align: center;
+        }
+
+        /* SVG icon styling */
+        .offline-icon {
+            margin-bottom: 1.5rem; /* Space below the icon */
+            width: 100px; /* Larger size to match screenshot */
+            height: 100px;
+            color: #ef4444; /* Red color for the icon */
+            stroke-width: 1.5; /* Thicker stroke for icon to match screenshot */
+            display: block; /* Ensure it takes up its own line */
+            margin-left: auto; /* Center the SVG */
+            margin-right: auto; /* Center the SVG */
+        }
+
+        /* Heading styling */
+        h1 {
+            color: #333; /* Darker text for heading as in screenshot */
+            font-size: 1.5rem; /* text-2xl for mobile */
+            font-weight: 600; /* Semi-bold */
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        /* Paragraph styling */
+        p {
+            font-size: 1rem; /* Base text size for mobile */
+            color: #6b7280; /* Gray text for description */
+            margin-bottom: 2rem; /* Space before the button */
+            line-height: 1.5;
+        }
+
+        /* Try Again button styling */
+        .try-again-button {
+            background-color: #e5e7eb; /* Light gray background for button */
+            color: #4b5563; /* Darker text for button */
+            padding: 0.75rem 2rem;
+            border-radius: 9999px; /* Fully rounded button */
+            font-weight: 500; /* Medium font weight */
+            transition: background-color 0.2s ease-in-out;
+            display: inline-block; /* Allows padding and margin */
+            text-decoration: none; /* Remove underline from link */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+
+        .try-again-button:hover {
+            background-color: #d1d5db; /* Slightly darker on hover */
+        }
+
+        /* Responsive adjustments for larger screens (e.g., tablets and desktops) */
+        @media (min-width: 640px) { /* Equivalent to Tailwind's 'sm' breakpoint */
+            .container {
+                max-width: 400px; /* Consistent width */
+                padding: 3.5rem 2rem;
+            }
+            .offline-icon {
+                width: 120px; /* Larger icon for desktop */
+                height: 120px;
+            }
+            h1 {
+                font-size: 1.875rem; /* text-3xl for sm+ */
+            }
+            p {
+                font-size: 1.125rem; /* text-lg for sm+ */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SVG Icon for offline status - Styled to match screenshot -->
+        <svg class="offline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+        </svg>
+        <h1>You're offline!</h1>
+        <p>Check your internet connectivity.</p>
+        <a href="#" class="try-again-button" onclick="window.location.reload(); return false;">Try Again</a>
+    </div>
+</body>
+</html>
