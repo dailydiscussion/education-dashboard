@@ -1,28 +1,28 @@
 {
   "files": {
     "main.css": "/education-dashboard/static/css/main.498e01c9.css",
-    "main.js": "/education-dashboard/static/js/main.9ff1ab49.js",
-    "static/js/990.cd9b1428.chunk.js": "/education-dashboard/static/js/990.cd9b1428.chunk.js",
+    "main.js": "/education-dashboard/static/js/main.2bb6ba9b.js",
+    "static/js/990.b44ba68c.chunk.js": "/education-dashboard/static/js/990.b44ba68c.chunk.js",
     "static/js/3.79724fb0.chunk.js": "/education-dashboard/static/js/3.79724fb0.chunk.js",
     "static/js/244.44b9b1a5.chunk.js": "/education-dashboard/static/js/244.44b9b1a5.chunk.js",
     "static/js/763.507ea814.chunk.js": "/education-dashboard/static/js/763.507ea814.chunk.js",
     "static/js/133.89668476.chunk.js": "/education-dashboard/static/js/133.89668476.chunk.js",
-    "static/js/807.f367c1e3.chunk.js": "/education-dashboard/static/js/807.f367c1e3.chunk.js",
+    "static/js/807.9eb0cf52.chunk.js": "/education-dashboard/static/js/807.9eb0cf52.chunk.js",
     "static/js/648.8228cb9e.chunk.js": "/education-dashboard/static/js/648.8228cb9e.chunk.js",
     "service-worker.js": "/education-dashboard/service-worker.js",
     "index.html": "/education-dashboard/index.html",
     "main.498e01c9.css.map": "/education-dashboard/static/css/main.498e01c9.css.map",
-    "main.9ff1ab49.js.map": "/education-dashboard/static/js/main.9ff1ab49.js.map",
-    "990.cd9b1428.chunk.js.map": "/education-dashboard/static/js/990.cd9b1428.chunk.js.map",
+    "main.2bb6ba9b.js.map": "/education-dashboard/static/js/main.2bb6ba9b.js.map",
+    "990.b44ba68c.chunk.js.map": "/education-dashboard/static/js/990.b44ba68c.chunk.js.map",
     "3.79724fb0.chunk.js.map": "/education-dashboard/static/js/3.79724fb0.chunk.js.map",
     "244.44b9b1a5.chunk.js.map": "/education-dashboard/static/js/244.44b9b1a5.chunk.js.map",
     "763.507ea814.chunk.js.map": "/education-dashboard/static/js/763.507ea814.chunk.js.map",
     "133.89668476.chunk.js.map": "/education-dashboard/static/js/133.89668476.chunk.js.map",
-    "807.f367c1e3.chunk.js.map": "/education-dashboard/static/js/807.f367c1e3.chunk.js.map",
+    "807.9eb0cf52.chunk.js.map": "/education-dashboard/static/js/807.9eb0cf52.chunk.js.map",
     "648.8228cb9e.chunk.js.map": "/education-dashboard/static/js/648.8228cb9e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.498e01c9.css",
-    "static/js/main.9ff1ab49.js"
+    "static/js/main.2bb6ba9b.js"
   ]
 }
