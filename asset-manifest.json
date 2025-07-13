@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/education-dashboard/static/css/main.a7421473.css",
-    "main.js": "/education-dashboard/static/js/main.db2255ce.js",
-    "static/js/990.be80fe59.chunk.js": "/education-dashboard/static/js/990.be80fe59.chunk.js",
+    "main.css": "/education-dashboard/static/css/main.64d9e4ca.css",
+    "main.js": "/education-dashboard/static/js/main.6adbd781.js",
+    "static/js/990.ef01d567.chunk.js": "/education-dashboard/static/js/990.ef01d567.chunk.js",
     "static/js/3.32739360.chunk.js": "/education-dashboard/static/js/3.32739360.chunk.js",
     "static/js/244.77af50ab.chunk.js": "/education-dashboard/static/js/244.77af50ab.chunk.js",
     "static/js/763.5fbf2f45.chunk.js": "/education-dashboard/static/js/763.5fbf2f45.chunk.js",
@@ -12,9 +12,9 @@
     "static/media/profile-admin.jpg": "/education-dashboard/static/media/profile-admin.024f0d2cc064abc938aa.jpg",
     "service-worker.js": "/education-dashboard/service-worker.js",
     "index.html": "/education-dashboard/index.html",
-    "main.a7421473.css.map": "/education-dashboard/static/css/main.a7421473.css.map",
-    "main.db2255ce.js.map": "/education-dashboard/static/js/main.db2255ce.js.map",
-    "990.be80fe59.chunk.js.map": "/education-dashboard/static/js/990.be80fe59.chunk.js.map",
+    "main.64d9e4ca.css.map": "/education-dashboard/static/css/main.64d9e4ca.css.map",
+    "main.6adbd781.js.map": "/education-dashboard/static/js/main.6adbd781.js.map",
+    "990.ef01d567.chunk.js.map": "/education-dashboard/static/js/990.ef01d567.chunk.js.map",
     "3.32739360.chunk.js.map": "/education-dashboard/static/js/3.32739360.chunk.js.map",
     "244.77af50ab.chunk.js.map": "/education-dashboard/static/js/244.77af50ab.chunk.js.map",
     "763.5fbf2f45.chunk.js.map": "/education-dashboard/static/js/763.5fbf2f45.chunk.js.map",
@@ -23,7 +23,7 @@
     "648.8228cb9e.chunk.js.map": "/education-dashboard/static/js/648.8228cb9e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a7421473.css",
-    "static/js/main.db2255ce.js"
+    "static/css/main.64d9e4ca.css",
+    "static/js/main.6adbd781.js"
   ]
 }
