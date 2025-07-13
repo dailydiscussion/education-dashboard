@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/education-dashboard/static/css/main.f6ced267.css",
-    "main.js": "/education-dashboard/static/js/main.ec6e169b.js",
-    "static/js/990.6f3b0e37.chunk.js": "/education-dashboard/static/js/990.6f3b0e37.chunk.js",
+    "main.js": "/education-dashboard/static/js/main.2c3488a8.js",
+    "static/js/990.a7de392c.chunk.js": "/education-dashboard/static/js/990.a7de392c.chunk.js",
     "static/js/3.32739360.chunk.js": "/education-dashboard/static/js/3.32739360.chunk.js",
     "static/js/244.77af50ab.chunk.js": "/education-dashboard/static/js/244.77af50ab.chunk.js",
     "static/js/763.5fbf2f45.chunk.js": "/education-dashboard/static/js/763.5fbf2f45.chunk.js",
@@ -13,8 +13,8 @@
     "service-worker.js": "/education-dashboard/service-worker.js",
     "index.html": "/education-dashboard/index.html",
     "main.f6ced267.css.map": "/education-dashboard/static/css/main.f6ced267.css.map",
-    "main.ec6e169b.js.map": "/education-dashboard/static/js/main.ec6e169b.js.map",
-    "990.6f3b0e37.chunk.js.map": "/education-dashboard/static/js/990.6f3b0e37.chunk.js.map",
+    "main.2c3488a8.js.map": "/education-dashboard/static/js/main.2c3488a8.js.map",
+    "990.a7de392c.chunk.js.map": "/education-dashboard/static/js/990.a7de392c.chunk.js.map",
     "3.32739360.chunk.js.map": "/education-dashboard/static/js/3.32739360.chunk.js.map",
     "244.77af50ab.chunk.js.map": "/education-dashboard/static/js/244.77af50ab.chunk.js.map",
     "763.5fbf2f45.chunk.js.map": "/education-dashboard/static/js/763.5fbf2f45.chunk.js.map",
@@ -24,6 +24,6 @@
   },
   "entrypoints": [
     "static/css/main.f6ced267.css",
-    "static/js/main.ec6e169b.js"
+    "static/js/main.2c3488a8.js"
   ]
 }
