@@ -4,107 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>You're Offline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Base styles */
-        body {
-            font-family: 'Inter', sans-serif; /* Fallback to sans-serif */
-            background-color: #f0f4f8; /* Light gray background */
-            color: #333; /* Dark text for readability */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Full viewport height */
+        :root {
+            --primary: #2563eb; /* Tailwind blue-600 */
+            --primary-dark: #1d4ed8; /* Tailwind blue-700 */
+            --accent: #ef4444; /* Tailwind red-500 */
+            --bg: #f3f4f6; /* Tailwind gray-100 */
+            --card-bg: #fff;
+            --text: #1e293b; /* Tailwind slate-800 */
+            --muted: #64748b; /* Tailwind slate-400 */
+        }
+        html, body {
+            height: 100%;
             margin: 0;
-            padding: 1rem; /* Basic padding for small screens */
-            box-sizing: border-box; /* Include padding in element's total width and height */
+            padding: 0;
         }
-
-        /* Container styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fade-in {
+            animation: fadeIn 0.7s cubic-bezier(0.4,0,0.2,1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .container {
-            max-width: 90%; /* Max width for mobile */
+            background: var(--card-bg);
+            border-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 6px 24px 0 rgba(30,41,59,0.08), 0 1.5px 4px 0 rgba(30,41,59,0.04);
+            padding: 2.5rem 1.5rem;
+            max-width: 95vw;
             width: 100%;
-            padding: 2.5rem 1.5rem; /* Adjusted padding for the new layout */
-            background-color: #ffffff; /* White background for content */
-            border-radius: 0.75rem; /* Rounded corners */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
             text-align: center;
+            margin: 0 auto;
         }
-
-        /* SVG icon styling */
         .offline-icon {
-            margin-bottom: 1.5rem; /* Space below the icon */
-            width: 100px; /* Larger size to match screenshot */
-            height: 100px;
-            color: #ef4444; /* Red color for the icon */
-            stroke-width: 1.5; /* Thicker stroke for icon to match screenshot */
-            display: block; /* Ensure it takes up its own line */
-            margin-left: auto; /* Center the SVG */
-            margin-right: auto; /* Center the SVG */
+            margin-bottom: 1.5rem;
+            width: 72px;
+            height: 72px;
+            color: var(--accent);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
-
-        /* Heading styling */
         h1 {
-            color: #333; /* Darker text for heading as in screenshot */
-            font-size: 1.5rem; /* text-2xl for mobile */
-            font-weight: 600; /* Semi-bold */
+            color: var(--primary);
+            font-size: 1.15rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
             line-height: 1.2;
         }
-
-        /* Paragraph styling */
         p {
-            font-size: 1rem; /* Base text size for mobile */
-            color: #6b7280; /* Gray text for description */
-            margin-bottom: 2rem; /* Space before the button */
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
             line-height: 1.5;
         }
-
-        /* Try Again button styling */
         .try-again-button {
-            background-color: #e5e7eb; /* Light gray background for button */
-            color: #4b5563; /* Darker text for button */
-            padding: 0.75rem 2rem;
-            border-radius: 9999px; /* Fully rounded button */
-            font-weight: 500; /* Medium font weight */
-            transition: background-color 0.2s ease-in-out;
-            display: inline-block; /* Allows padding and margin */
-            text-decoration: none; /* Remove underline from link */
-            cursor: pointer; /* Indicate it's clickable */
+            background: var(--primary);
+            color: #fff;
+            padding: 0.75rem 2.25rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px 0 rgba(37,99,235,0.10);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1);
+            text-decoration: none;
+            display: inline-block;
         }
-
-        .try-again-button:hover {
-            background-color: #d1d5db; /* Slightly darker on hover */
+        .try-again-button:hover, .try-again-button:focus {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 16px 0 rgba(37,99,235,0.13);
         }
-
-        /* Responsive adjustments for larger screens (e.g., tablets and desktops) */
-        @media (min-width: 640px) { /* Equivalent to Tailwind's 'sm' breakpoint */
+        @media (min-width: 480px) {
             .container {
-                max-width: 400px; /* Consistent width */
-                padding: 3.5rem 2rem;
+                max-width: 400px;
+                padding: 3rem 2rem;
             }
             .offline-icon {
-                width: 120px; /* Larger icon for desktop */
-                height: 120px;
+                width: 90px;
+                height: 90px;
             }
             h1 {
-                font-size: 1.875rem; /* text-3xl for sm+ */
+                font-size: 1.35rem;
             }
             p {
-                font-size: 1.125rem; /* text-lg for sm+ */
+                font-size: 0.75rem;
+            }
+            .try-again-button {
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- SVG Icon for offline status - Styled to match screenshot -->
-        <svg class="offline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+    <div class="container fade-in">
+        <!-- SVG Icon for offline status - modern, friendly, accent color -->
+        <svg class="offline-icon" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 16.5a6 6 0 017-7" />
+            <circle cx="12" cy="12" r="9" stroke="var(--accent)" stroke-width="2.2" fill="none" />
         </svg>
         <h1>You're offline!</h1>
-        <p>Check your internet connectivity.</p>
-        <a href="#" class="try-again-button" onclick="window.location.reload(); return false;">Try Again</a>
+        <p>It looks like you lost your internet connection.<br>Check your network and try again.</p>
+        <a href="#" class="try-again-button" onclick="window.location.reload(); return false;">
+          <span style="display:inline-flex;align-items:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="margin-right:0.5em;vertical-align:middle;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Try Again
+          </span>
+        </a>
     </div>
 </body>
 </html>
