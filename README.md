@@ -1,36 +1,54 @@
-# Timetable App
+# Study Management System
 
-A modern React application for managing study timetables with a beautiful, responsive interface.
+A comprehensive React application for managing study activities, schedules, tests, and content with a beautiful, responsive interface.
 
-## Features
+## 🚀 Features
 
-- **Interactive Timetable**: View and manage your study schedule
-- **Event Management**: Add, edit, and delete study events
+### 📊 Dashboard
+- **Statistics Overview**: Visual charts showing study progress, test scores, and activity metrics
+- **Recent Activity Feed**: Track recent study sessions, test completions, and content updates
+- **Upcoming Events**: Quick view of upcoming study sessions and deadlines
+- **Progress Tracking**: Visual progress bars and completion rates
+
+### 📅 Timetable Management
+- **Interactive Schedule**: View and manage your study timetable
+- **Event Management**: Add, edit, and delete study events with custom button colors
 - **Status Tracking**: Real-time event status (Live, Pending, Completed, Missed)
 - **Search & Filter**: Search events by subject, topic, or time
+- **Date Navigation**: Navigate between different dates and weeks
+
+### 📝 Test Tracking
+- **Test Results**: Comprehensive tracking of test scores and performance
+- **Statistics**: Average scores, pass rates, and improvement trends
+- **Search & Filter**: Filter tests by subject, grade, or date range
+- **Detailed Reviews**: View question breakdowns and performance analysis
+- **Add New Tests**: Easy form for adding test results with validation
+
+### 📚 Content Management
+- **Study Materials**: Organize notes, textbooks, videos, and other resources
+- **Categories**: Filter content by type (Notes, Textbooks, Videos, etc.)
+- **Search Functionality**: Quick search across all content
+- **Study Status**: Track reading progress and completion status
+- **Grid/List Views**: Toggle between different viewing modes
+
+### 🎨 UI/UX Features
 - **Responsive Design**: Works perfectly on all devices
-- **Beautiful UI**: Modern interface with smooth animations
+- **Beautiful Animations**: Smooth transitions with Framer Motion
+- **Modern Interface**: Clean, intuitive design
 - **Admin Mode**: Toggle between admin and user modes
+- **Custom Button Colors**: Status-matched button colors for better UX
+- **Navigation System**: Responsive sidebar with mobile support
 
-## Button Customization
+## 🛠️ Technologies Used
 
-The edit and delete buttons in the TimetableEventCard component now have custom background colors that match the card status:
-
-- **Completed events**: Green background colors
-- **Missed events**: Red background colors  
-- **Normal events**: Gray background colors
-
-The buttons are distinct from the card background while maintaining visual harmony.
-
-## Technologies Used
-
-- **React 18**: Modern React with hooks
+- **React 18**: Modern React with hooks and context
 - **Tailwind CSS**: Utility-first CSS framework
-- **Framer Motion**: Smooth animations and transitions
-- **React Icons**: Beautiful icon library
-- **Context API**: State management
+- **Framer Motion**: Animation library for smooth transitions
+- **React Icons**: Comprehensive icon library
+- **Context API**: State management for admin and handlers
+- **Responsive Design**: Mobile-first approach
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -59,64 +77,139 @@ To create a production build:
 npm run build
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 src/
 ├── components/
-│   ├── TimetableEventCard.js    # Individual event card component
-│   ├── EditTimetableModal.js    # Modal for editing events
-│   └── AddModal.js              # Modal for adding new events
+│   ├── Navigation.js            # Responsive navigation sidebar
+│   ├── StatsCard.js            # Statistics display cards
+│   ├── RecentActivity.js       # Activity feed component
+│   ├── UpcomingEvents.js       # Upcoming events display
+│   ├── ProgressChart.js        # SVG progress visualization
+│   ├── TimetableEventCard.js   # Individual event card (custom buttons)
+│   ├── EditTimetableModal.js   # Modal for editing events
+│   ├── AddModal.js             # Modal for adding new events
+│   ├── TestResultCard.js       # Individual test result cards
+│   ├── TestDetailsModal.js     # Detailed test review modal
+│   ├── AddTestModal.js         # Add new test results modal
+│   ├── ContentCard.js          # Content display cards
+│   ├── AddContentModal.js      # Add new content modal
+│   └── EditContentModal.js     # Edit existing content modal
 ├── pages/
-│   └── TimetablePage.js         # Main timetable page
+│   ├── Dashboard.js            # Main dashboard with stats and overview
+│   ├── TimetablePage.js        # Study schedule management
+│   ├── TestCompleted.js        # Test results tracking
+│   └── ManageContent.js        # Study materials organization
 ├── context/
-│   ├── HandlerContext.js        # Context for event handlers
-│   └── AdminContext.js          # Context for admin functionality
-├── App.js                       # Main app component
-├── index.js                     # App entry point
-├── App.css                      # App-specific styles
-└── index.css                    # Global styles with Tailwind
+│   ├── HandlerContext.js       # Context for event handlers
+│   └── AdminContext.js         # Context for admin functionality
+├── App.js                      # Main app with routing and navigation
+├── index.js                    # App entry point
+├── App.css                     # App-specific styles
+└── index.css                   # Global styles with Tailwind
 ```
 
-## Key Components
+## 🎯 Key Components
 
-### TimetableEventCard
-- Displays individual study events
-- Shows event status with color-coded backgrounds
-- Includes edit/delete buttons in admin mode
-- Responsive design with smooth animations
+### Dashboard
+- **StatsCard**: Animated statistics display with icons and trends
+- **RecentActivity**: Real-time activity feed with timestamps
+- **UpcomingEvents**: Next scheduled events and deadlines
+- **ProgressChart**: SVG-based progress visualization
 
-### TimetablePage
-- Main page component
-- Handles event filtering and searching
-- Manages edit/add modals
-- Provides date navigation
+### Timetable System
+- **TimetableEventCard**: Event cards with custom status-matched button colors
+- **EditTimetableModal**: Full-featured event editing
+- **AddModal**: Add new study sessions with validation
 
-### Context Providers
-- **HandlerContext**: Provides event management functions
-- **AdminContext**: Manages admin mode state
+### Test Tracking
+- **TestResultCard**: Individual test results with scores and grades
+- **TestDetailsModal**: Detailed test review with question breakdown
+- **AddTestModal**: Add test results with comprehensive validation
 
-## Customization
+### Content Management
+- **ContentCard**: Study material cards with type icons and tags
+- **AddContentModal/EditContentModal**: Content CRUD operations
+- **Search and Filter**: Advanced content discovery
 
-### Button Colors
-The edit and delete button colors can be customized in `src/components/TimetableEventCard.js`:
-- Look for the `className` props in the motion.button components
-- Modify the Tailwind classes for different background colors
+### Navigation
+- **Navigation**: Responsive sidebar with mobile hamburger menu
+- **Page Routing**: Smooth navigation between all sections
 
-### Event Status Colors
-Event status indicators can be customized in the `getEventStatus` function in `TimetableEventCard.js`.
+## 🎨 Custom Features
 
-## Available Scripts
+### Button Color System
+The edit and delete buttons in TimetableEventCard have custom colors that match card status:
+- **Completed events**: `bg-green-200 hover:bg-green-300` (card: `bg-green-100`)
+- **Missed events**: `bg-red-200 hover:bg-red-300` (card: `bg-red-100`)
+- **Normal events**: `bg-gray-100 hover:bg-gray-200` (card: `bg-gray-50`)
 
-- `npm start`: Runs the app in development mode
-- `npm build`: Builds the app for production
-- `npm test`: Launches the test runner
-- `npm eject`: Ejects from Create React App (one-way operation)
+### Status-Based Styling
+- **Live**: Yellow/orange indicators for active sessions
+- **Pending**: Blue indicators for upcoming events
+- **Completed**: Green indicators for finished tasks
+- **Missed**: Red indicators for missed sessions
 
-## Sample Data
+### Responsive Design
+- **Mobile-first**: Optimized for mobile devices
+- **Tablet**: Adapted layouts for medium screens
+- **Desktop**: Full-featured experience on large screens
 
-The app includes sample timetable entries for demonstration purposes. In a real application, this would be connected to a backend API.
+## 📊 Sample Data
 
-## License
+The application includes comprehensive sample data for demonstration:
+- **Timetable Entries**: Various study sessions with different statuses
+- **Test Results**: Sample test scores across different subjects
+- **Content Items**: Study materials of different types
+- **Activity Feed**: Recent user interactions and updates
 
-This project is for educational purposes.
+## 🔧 Configuration
+
+### Tailwind CSS
+Custom configuration in `tailwind.config.js` with:
+- Extended color palette
+- Custom animations
+- Responsive breakpoints
+
+### Package Dependencies
+Key packages in `package.json`:
+- React and React-DOM
+- Tailwind CSS
+- Framer Motion
+- React Icons
+- Development tools
+
+## 📈 Future Enhancements
+
+- **Backend Integration**: Connect to API for data persistence
+- **User Authentication**: Login and user management
+- **Calendar Integration**: Sync with external calendars
+- **Notifications**: Push notifications for upcoming events
+- **Advanced Analytics**: More detailed progress tracking
+- **Export Features**: Export data to PDF/Excel
+- **Collaboration**: Share schedules and study materials
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📄 License
+
+This project is for educational purposes and study management.
+
+## 🆘 Support
+
+For questions or issues:
+1. Check the project structure and component documentation
+2. Review the sample data implementation
+3. Examine the context providers for state management
+4. Look at the responsive design patterns used throughout
+
+---
+
+**Note**: This is a comprehensive study management system with dashboard, timetable, test tracking, and content management features. The custom button colors in the timetable component maintain visual harmony while providing distinct, clickable interactions.
