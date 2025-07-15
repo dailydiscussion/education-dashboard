@@ -175,10 +175,10 @@ const TimetableEventCard = React.memo(({ event, nextEvent, isEditMode, onEdit, s
             onClick={() => onEdit(event.id)}
             className={`flex items-center justify-center gap-1.5 w-20 py-1.5 rounded-lg transition-colors duration-200 text-blue-600 hover:bg-opacity-70 ${
               event.checked || (status && status === 'Completed')
-                ? 'bg-green-100 hover:bg-green-200'
+                ? 'bg-green-200 hover:bg-green-300'
                 : (status && status === 'Missed') || (!status && statusObj.text === 'Missed')
-                ? 'bg-red-100 hover:bg-red-200'
-                : 'bg-gray-50 hover:bg-gray-100'
+                ? 'bg-red-200 hover:bg-red-300'
+                : 'bg-gray-100 hover:bg-gray-200'
             }`}
             aria-label="Edit event"
             whileTap={{ scale: 0.95 }}
@@ -191,10 +191,10 @@ const TimetableEventCard = React.memo(({ event, nextEvent, isEditMode, onEdit, s
             onClick={() => handlers.deleteTimetableEntry(event.id)}
             className={`flex items-center justify-center gap-1.5 w-20 py-1.5 rounded-lg transition-colors duration-200 text-red-600 hover:bg-opacity-70 ${
               event.checked || (status && status === 'Completed')
-                ? 'bg-green-100 hover:bg-green-200'
+                ? 'bg-green-200 hover:bg-green-300'
                 : (status && status === 'Missed') || (!status && statusObj.text === 'Missed')
-                ? 'bg-red-100 hover:bg-red-200'
-                : 'bg-gray-50 hover:bg-gray-100'
+                ? 'bg-red-200 hover:bg-red-300'
+                : 'bg-gray-100 hover:bg-gray-200'
             }`}
             aria-label="Delete event"
             whileTap={{ scale: 0.95 }}
